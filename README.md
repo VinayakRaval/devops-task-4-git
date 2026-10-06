@@ -1,31 +1,54 @@
-# DevOps Version Control Project
+# DevOps Internship - Task 4
+## Build a Version-Controlled DevOps Project with Git
 
-## Task 4
+![Git](https://img.shields.io/badge/Git-Version%20Control-orange)
+![GitHub](https://img.shields.io/badge/GitHub-Repository-black)
+![Status](https://img.shields.io/badge/Status-Completed-success)
 
-This project demonstrates Git and GitHub version control best practices.
+---
 
-## Tools Used
+## 📌 Project Overview
 
-- Git
-- GitHub
-- PowerShell
-- HTML
+This project was created as part of the DevOps Internship Task 4.
 
-## Git Workflow
+The objective of this task is to manage a DevOps project using Git and GitHub best practices.
 
-main
-  ↓
-dev
-  ↓
-feature
+The project demonstrates:
 
-## Project Structure
+- Git repository initialization
+- GitHub repository creation
+- Branching
+- Feature development
+- Pull Requests
+- Git commits
+- `.gitignore`
+- Git tags
+- Markdown documentation
+
+---
+
+## 🎯 Objective
+
+The main objective of this task is to understand and implement a basic Git workflow for a DevOps project.
+
+The workflow used in this project is:
 
 ```text
-devops-task-4-git/
-│
-├── index.html
-│   
-│
-├── README.md
-└── .gitignore
+                  ┌─────────────┐
+                  │    main     │
+                  │ Production  │
+                  └──────▲──────┘
+                         │
+                    Pull Request
+                         │
+                  ┌──────┴──────┐
+                  │     dev     │
+                  │ Development │
+                  └──────▲──────┘
+                         │
+                    Pull Request
+                         │
+                  ┌──────┴──────┐
+                  │   feature   │
+                  │ New Feature │
+                  └─────────────┘
