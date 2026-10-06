@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08111f">
+  <meta name="description" content="Modern DevOps portfolio and learning dashboard.">
+  <title>DevOps Nexus — Cloud, CI/CD & Kubernetes</title>
+  <style>
+    :root {
+      --bg: #060b14;
+      --bg-soft: #0a1220;
+      --panel: rgba(13, 23, 38, 0.82);
+      --panel-2: #0f1b2d;
+      --text: #edf5ff;
+      --muted: #8da2bb;
+      --line: rgba(255,255,255,.09);
+      --primary: #6d7cff;
+      --primary-2: #8d5cff;
+      --cyan: #27d8ff;
+      --green: #45e6a4;
+      --orange: #ffb86b;
+      --red: #ff6b81;
+      --shadow: 0 20px 70px rgba(0,0,0,.35);
+      --radius: 22px;
+      --max: 1240px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(109,124,255,.14), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(39,216,255,.10), transparent 28%),
+        linear-gradient(180deg, #060b14 0%, #08101d 48%, #050a12 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body.light {
+      --bg: #f4f7fb;
+      --bg-soft: #eaf0f8;
+      --panel: rgba(255,255,255,.84);
+      --panel-2: #ffffff;
+      --text: #122033;
+      --muted: #5d6d82;
+      --line: rgba(18,32,51,.10);
+      background: linear-gradient(180deg, #f7faff, #edf3fb);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin-inline: auto;
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: .35;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .orb {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: .13;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .orb.one {
+      top: 80px;
+      left: -120px;
+      background: var(--primary);
+    }
+
+    .orb.two {
+      right: -130px;
+      top: 420px;
+      background: var(--cyan);
+    }
+
+    .announcement {
+      background: linear-gradient(90deg, rgba(109,124,255,.16), rgba(39,216,255,.10));
+      border-bottom: 1px solid var(--line);
+      color: #cfe0f5;
+      font-size: 13px;
+      padding: 9px 16px;
+      text-align: center;
+    }
+
+    .announcement strong {
+      color: white;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(6,11,20,.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    body.light .navbar {
+      background: rgba(247,250,255,.76);
+    }
+
+    .nav-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      box-shadow: 0 10px 30px rgba(109,124,255,.28);
+    }
+
+    .brand span {
+      font-size: 19px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-links a {
+      padding: 9px 12px;
+      color: var(--muted);
+      font-size: 14px;
+      border-radius: 10px;
+      transition: .2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn,
+    .menu-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+    }
+
+    .menu-btn {
+      display: none;
+    }
+
+    .hero {
+      padding: 88px 0 70px;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 54px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid rgba(109,124,255,.28);
+      background: rgba(109,124,255,.08);
+      border-radius: 999px;
+      color: #bfc8ff;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(69,230,164,.08);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      50% {
+        box-shadow: 0 0 0 9px rgba(69,230,164,0);
+      }
+    }
+
+    .hero h1 {
+      margin-top: 22px;
+      max-width: 760px;
+      font-size: clamp(46px, 6vw, 82px);
+      line-height: .98;
+      letter-spacing: -.065em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #fff 10%, #aeb8ff 48%, #58ddff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 18px;
+      border-radius: 13px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 14px 34px rgba(109,124,255,.25);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 27px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hero-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 470px;
+    }
+
+    .terminal {
+      position: absolute;
+      inset: 35px 0 35px 25px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 24px;
+      background: rgba(7,13,23,.9);
+      box-shadow: var(--shadow);
+      transform: perspective(1100px) rotateY(-8deg) rotateX(4deg);
+    }
+
+    .terminal-top {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 17px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.035);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #607087;
+    }
+
+    .terminal-title {
+      margin-left: 8px;
+      color: #8192aa;
+      font: 12px ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .terminal-body {
+      padding: 24px;
+      font: 13px/2 ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #c5d2e6;
+    }
+
+    .terminal-body .prompt {
+      color: var(--green);
+    }
+
+    .terminal-body .command {
+      color: #fff;
+    }
+
+    .terminal-body .output {
+      color: #7f94ad;
+    }
+
+    .terminal-body .accent {
+      color: var(--cyan);
+    }
+
+    .float-card {
+      position: absolute;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(14,24,40,.84);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .float-card.top {
+      top: 0;
+      right: -10px;
+    }
+
+    .float-card.bottom {
+      bottom: 0;
+      left: -10px;
+    }
+
+    .float-card strong {
+      display: block;
+      font-size: 22px;
+    }
+
+    .float-card small {
+      color: var(--muted);
+    }
+
+    section {
+      padding: 82px 0;
+      scroll-margin-top: 80px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .section-kicker {
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .section-head h2 {
+      margin-top: 8px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+    }
+
+    .section-head p {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 15px 45px rgba(0,0,0,.12);
+    }
+
+    .stat-card .number {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -.05em;
+    }
+
+    .stat-card .label {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progress {
+      height: 6px;
+      margin-top: 15px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .tool-card {
+      min-height: 190px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      transition: .25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-card::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      right: -45px;
+      bottom: -45px;
+      border-radius: 50%;
+      background: rgba(109,124,255,.12);
+      filter: blur(5px);
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(109,124,255,.35);
+      box-shadow: 0 20px 50px rgba(0,0,0,.22);
+    }
+
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(109,124,255,.10);
+      border: 1px solid rgba(109,124,255,.20);
+      font-size: 22px;
+    }
+
+    .tool-card h3 {
+      margin-top: 18px;
+      font-size: 18px;
+    }
+
+    .tool-card p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+      gap: 22px;
+    }
+
+    .workflow-copy,
+    .pipeline {
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+    }
+
+    .workflow-copy h3 {
+      font-size: 28px;
+      letter-spacing: -.035em;
+    }
+
+    .workflow-copy p {
+      margin-top: 13px;
+      color: var(--muted);
+    }
+
+    .check-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 22px;
+      list-style: none;
+    }
+
+    .check-list li {
+      display: flex;
+      gap: 10px;
+      color: #c7d5e6;
+      font-size: 14px;
+    }
+
+    .check-list li::before {
+      content: "✓";
+      flex: 0 0 auto;
+      width: 21px;
+      height: 21px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--green);
+      background: rgba(69,230,164,.10);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .pipeline {
+      overflow: hidden;
+    }
+
+    .pipeline-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .pipeline-head strong {
+      font-size: 16px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(69,230,164,.09);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .pipeline-line {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .pipeline-line::before {
+      content: "";
+      position: absolute;
+      top: 27px;
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--cyan), var(--green));
+      opacity: .55;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .stage-icon {
+      width: 55px;
+      height: 55px;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      border: 1px solid rgba(109,124,255,.28);
+      background: #0c1727;
+      font-size: 20px;
+    }
+
+    .stage strong {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+    }
+
+    .stage small {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .architecture {
+      padding: 34px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(39,216,255,.09), transparent 30%),
+        var(--panel);
+    }
+
+    .arch-flow {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: center;
+      gap: 9px;
+      margin-top: 28px;
+    }
+
+    .arch-node {
+      min-height: 110px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 6px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .arch-node span {
+      font-size: 25px;
+    }
+
+    .arch-node strong {
+      font-size: 11px;
+    }
+
+    .arch-node small {
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .arrow {
+      color: var(--cyan);
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .project {
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      transition: .25s ease;
+    }
+
+    .project:hover {
+      transform: translateY(-5px);
+      border-color: rgba(39,216,255,.25);
+    }
+
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .project-badge {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: #a9b4ff;
+      background: rgba(109,124,255,.10);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .project h3 {
+      margin-top: 25px;
+      font-size: 23px;
+    }
+
+    .project p {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 17px;
+    }
+
+    .tag {
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #a8b9ce;
+      background: rgba(255,255,255,.03);
+      font-size: 10px;
+    }
+
+    .project-footer {
+      margin-top: auto;
+      padding-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .learning {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .roadmap {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+    }
+
+    .roadmap-item {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 13px;
+      align-items: start;
+      padding: 17px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .roadmap-item:last-child {
+      border-bottom: 0;
+    }
+
+    .roadmap-number {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(109,124,255,.10);
+      color: #abb4ff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .roadmap-item h4 {
+      font-size: 14px;
+    }
+
+    .roadmap-item p {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .roadmap-state {
+      padding: 5px 8px;
+      border-radius: 7px;
+      color: var(--green);
+      background: rgba(69,230,164,.08);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .skills {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+    }
+
+    .skill {
+      margin-bottom: 21px;
+    }
+
+    .skill:last-child {
+      margin-bottom: 0;
+    }
+
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .skill-row span:last-child {
+      color: var(--cyan);
+      font-weight: 800;
+    }
+
+    .faq {
+      display: grid;
+      gap: 10px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .faq-item {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text);
+      background: transparent;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    .faq-question span:last-child {
+      color: var(--cyan);
+      font-size: 20px;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease;
+    }
+
+    .faq-answer p {
+      padding: 0 20px 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 150px;
+    }
+
+    .terminal-demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .code-box {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #07101b;
+    }
+
+    .code-head {
+      display: flex;
+      justify-content: space-between;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line);
+      color: #8ea1b7;
+      font-size: 11px;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 20px;
+      color: #b9c9dd;
+      font: 12px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .contact {
+      padding: 38px;
+      border: 1px solid rgba(109,124,255,.20);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(109,124,255,.15), transparent 30%),
+        radial-gradient(circle at 90% 70%, rgba(39,216,255,.12), transparent 28%),
+        var(--panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .contact h2 {
+      font-size: clamp(30px, 4vw, 48px);
+      letter-spacing: -.05em;
+      line-height: 1;
+    }
+
+    .contact p {
+      max-width: 650px;
+      margin-top: 10px;
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 30px 0 45px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 15px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translate(-50%, 30px);
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #101d30;
+      color: white;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      z-index: 300;
+      font-size: 12px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: .65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 1050px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        max-width: 780px;
+        width: 100%;
+        margin: auto;
+      }
+
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .projects {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .arch-flow {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .arrow {
+        display: none;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .container {
+        width: min(calc(100% - 28px), var(--max));
+      }
+
+      .nav-links {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        top: 70px;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(8,15,26,.97);
+      }
+
+      body.light .nav-links {
+        background: rgba(255,255,255,.97);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px;
+      }
+
+      .menu-btn {
+        display: block;
+      }
+
+      .stats,
+      .projects,
+      .learning,
+      .terminal-demo,
+      .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+
+      .hero-visual {
+        min-height: 390px;
+      }
+
+      .terminal {
+        inset: 30px 0 30px 0;
+        transform: none;
+      }
+
+      .float-card.top {
+        right: 8px;
+      }
+
+      .float-card.bottom {
+        left: 8px;
+      }
+
+      .arch-flow {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .contact {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .tools-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 46px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .pipeline-line {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .pipeline-line::before {
+        display: none;
+      }
+
+      .stage {
+        display: grid;
+        grid-template-columns: 55px 1fr;
+        align-items: center;
+        text-align: left;
+        gap: 12px;
+      }
+
+      .stage-icon {
+        margin: 0;
+      }
+
+      .stage strong,
+      .stage small {
+        grid-column: 2;
+        margin-left: -67px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
+<!-- ========================= DEVOPS NEXUS ========================= -->
+<!-- Hero and command-center UI -->
+<!-- Responsive navigation -->
+</head>
+<body>
+  <!-- Main application shell -->
+  <div class="grid-bg"></div>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+
+  <div class="announcement">
+    <strong>DevOps Nexus</strong> · Build faster · Deploy safer · Operate smarter
+  </div>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="#home">
+        <div class="brand-mark">⌘</div>
+        <span>DevOps<span style="color:var(--cyan)">Nexus</span></span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#tools">Tools</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#projects">Projects</a>
+        <a href="#learning">Roadmap</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">☾</button>
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <!-- Primary DevOps experience -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <div class="eyebrow">
+            <span class="pulse"></span>
+            DevOps Engineering Platform
+          </div>
+
+          <h1>
+            Ship code with
+            <span class="gradient-text">confidence.</span>
+          </h1>
+
+          <p>
+            A modern DevOps command center for understanding cloud infrastructure,
+            CI/CD, containers, Kubernetes, monitoring, automation and reliable delivery.
+          </p>
+
+          <div class="hero-buttons">
+            <a class="btn btn-primary" href="#pipeline">Explore Pipeline →</a>
+            <a class="btn btn-secondary" href="#projects">View Projects</a>
+          </div>
+
+          <div class="hero-meta">
+            <span>⚡ Continuous Delivery</span>
+            <span>☁ Cloud Native</span>
+            <span>◈ Kubernetes Ready</span>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="terminal">
+            <div class="terminal-top">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="terminal-title">devops@production: ~/pipeline</span>
+            </div>
+            <div class="terminal-body">
+              <div><span class="prompt">$</span> <span class="command">git push origin main</span></div>
+              <div class="output">Enumerating objects... done</div>
+              <div class="output">Running CI checks...</div>
+              <div><span class="accent">✓</span> Tests passed</div>
+              <div><span class="accent">✓</span> Docker image built</div>
+              <div><span class="accent">✓</span> Security scan passed</div>
+              <div><span class="accent">✓</span> Image pushed to registry</div>
+              <div><span class="accent">✓</span> Kubernetes deployment updated</div>
+              <br>
+              <div><span class="prompt">$</span> <span class="command">kubectl rollout status</span></div>
+              <div class="output">deployment "web" successfully rolled out</div>
+              <br>
+              <div><span class="prompt">$</span> <span class="command">echo $STATUS</span></div>
+              <div style="color:var(--green)">PRODUCTION_READY</div>
+            </div>
+          </div>
+
+          <div class="float-card top">
+            <strong>99.9%</strong>
+            <small>Availability target</small>
+          </div>
+
+          <div class="float-card bottom">
+            <strong>5 Stages</strong>
+            <small>Automated delivery flow</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">01 · Overview</div>
+            <h2>DevOps in one dashboard.</h2>
+          </div>
+          <p>
+            DevOps brings development and operations together through automation,
+            collaboration, fast feedback and repeatable infrastructure.
+          </p>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card reveal">
+            <div class="number" data-count="5">0</div>
+            <div class="label">Core delivery stages</div>
+            <div class="progress"><span style="width:92%"></span></div>
+          </div>
+
+          <div class="stat-card reveal">
+            <div class="number" data-count="12">0</div>
+            <div class="label">Popular DevOps capabilities</div>
+            <div class="progress"><span style="width:84%"></span></div>
+          </div>
+
+          <div class="stat-card reveal">
+            <div class="number" data-count="24">0</div>
+            <div class="label">Automation mindset</div>
+            <div class="progress"><span style="width:96%"></span></div>
+          </div>
+
+          <div class="stat-card reveal">
+            <div class="number" data-count="99">0</div>
+            <div class="label">Reliability focus (%)</div>
+            <div class="progress"><span style="width:99%"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolchain -->
+    <section id="tools">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">02 · Toolchain</div>
+            <h2>Tools that move software.</h2>
+          </div>
+          <p>
+            A practical DevOps stack covers source control, automation, containers,
+            orchestration, cloud, observability and infrastructure as code.
+          </p>
+        </div>
+
+        <div class="tools-grid">
+          <article class="tool-card reveal">
+            <div class="tool-icon">⑂</div>
+            <h3>Git & GitHub</h3>
+            <p>Track source code, collaborate through branches and trigger automated workflows.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">⚙</div>
+            <h3>Jenkins</h3>
+            <p>Automate builds, tests, image creation and deployment pipelines.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">▣</div>
+            <h3>Docker</h3>
+            <p>Package applications and dependencies into portable, reproducible containers.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">◈</div>
+            <h3>Kubernetes</h3>
+            <p>Orchestrate containers with scalable deployments, services and self-healing.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">☁</div>
+            <h3>AWS</h3>
+            <p>Run infrastructure, compute, storage, networking and applications in the cloud.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">⌘</div>
+            <h3>Terraform</h3>
+            <p>Define cloud infrastructure as code and manage environments consistently.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">◉</div>
+            <h3>Prometheus</h3>
+            <p>Collect metrics and build a foundation for application and infrastructure monitoring.</p>
+          </article>
+
+          <article class="tool-card reveal">
+            <div class="tool-icon">▤</div>
+            <h3>Grafana</h3>
+            <p>Turn metrics into dashboards that make system health easier to understand.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CI/CD -->
+    <section id="pipeline">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">03 · CI/CD</div>
+            <h2>From commit to production.</h2>
+          </div>
+          <p>
+            Continuous integration and continuous delivery create a repeatable path
+            from source code to a running application.
+          </p>
+        </div>
+
+        <div class="workflow">
+          <div class="workflow-copy reveal">
+            <h3>Automate the boring parts.</h3>
+            <p>
+              A strong pipeline gives developers rapid feedback while reducing manual
+              deployment errors. Every stage should be observable, repeatable and safe.
+            </p>
+
+            <ul class="check-list">
+              <li>Source control triggers the workflow.</li>
+              <li>Automated tests validate the change.</li>
+              <li>Docker creates a consistent artifact.</li>
+              <li>Security checks catch common risks.</li>
+              <li>Deployment updates the target environment.</li>
+              <li>Monitoring verifies the result.</li>
+            </ul>
+          </div>
+
+          <div class="pipeline reveal">
+            <div class="pipeline-head">
+              <strong>Production Delivery</strong>
+              <span class="status"><span class="pulse"></span> All systems go</span>
+            </div>
+
+            <div class="pipeline-line">
+              <div class="stage">
+                <div class="stage-icon">⑂</div>
+                <strong>Code</strong>
+                <small>Git push</small>
+              </div>
+
+              <div class="stage">
+                <div class="stage-icon">⚙</div>
+                <strong>Build</strong>
+                <small>CI runner</small>
+              </div>
+
+              <div class="stage">
+                <div class="stage-icon">▣</div>
+                <strong>Package</strong>
+                <small>Docker</small>
+              </div>
+
+              <div class="stage">
+                <div class="stage-icon">◉</div>
+                <strong>Test</strong>
+                <small>Quality</small>
+              </div>
+
+              <div class="stage">
+                <div class="stage-icon">🚀</div>
+                <strong>Deploy</strong>
+                <small>Cluster</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">04 · Architecture</div>
+            <h2>Cloud-native delivery flow.</h2>
+          </div>
+          <p>
+            Connect developers, automation, registries, clusters and observability
+            into one reliable software delivery system.
+          </p>
+        </div>
+
+        <div class="architecture reveal">
+          <div class="arch-flow">
+            <div class="arch-node">
+              <span>👨‍💻</span>
+              <strong>Developer</strong>
+              <small>Write code</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="arch-node">
+              <span>⑂</span>
+              <strong>Git</strong>
+              <small>Source control</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="arch-node">
+              <span>⚙</span>
+              <strong>CI/CD</strong>
+              <small>Automate</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="arch-node">
+              <span>▣</span>
+              <strong>Registry</strong>
+              <small>Store image</small>
+            </div>
+          </div>
+
+          <div class="arch-flow">
+            <div class="arch-node">
+              <span>☁</span>
+              <strong>Cloud</strong>
+              <small>Infrastructure</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="arch-node">
+              <span>◈</span>
+              <strong>Kubernetes</strong>
+              <small>Orchestrate</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="arch-node">
+              <span>🌐</span>
+              <strong>Service</strong>
+              <small>Users</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="arch-node">
+              <span>📈</span>
+              <strong>Observe</strong>
+              <small>Metrics & logs</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">05 · Projects</div>
+            <h2>Build. Automate. Deploy.</h2>
+          </div>
+          <p>
+            Example projects that demonstrate practical DevOps skills from source
+            control through production operations.
+          </p>
+        </div>
+
+        <div class="projects">
+          <article class="project reveal">
+            <div class="project-top">
+              <span class="project-badge">CI/CD</span>
+              <span>01</span>
+            </div>
+            <h3>Docker Pipeline</h3>
+            <p>
+              A complete workflow that pulls code from GitHub, builds a Docker image,
+              tags it and pushes it to a container registry.
+            </p>
+            <div class="tags">
+              <span class="tag">GitHub</span>
+              <span class="tag">Jenkins</span>
+              <span class="tag">Docker</span>
+              <span class="tag">Docker Hub</span>
+            </div>
+            <div class="project-footer">
+              <span>Automation</span>
+              <span>● Production pattern</span>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-top">
+              <span class="project-badge">K8S</span>
+              <span>02</span>
+            </div>
+            <h3>Kubernetes Deployment</h3>
+            <p>
+              Deploy containerized workloads into a Kubernetes cluster with services,
+              rolling updates and health-aware operations.
+            </p>
+            <div class="tags">
+              <span class="tag">Kubernetes</span>
+              <span class="tag">kubectl</span>
+              <span class="tag">Docker</span>
+              <span class="tag">AWS</span>
+            </div>
+            <div class="project-footer">
+              <span>Orchestration</span>
+              <span>● Scalable</span>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-top">
+              <span class="project-badge">IaC</span>
+              <span>03</span>
+            </div>
+            <h3>Terraform Cloud Stack</h3>
+            <p>
+              Provision repeatable infrastructure using declarative configuration
+              instead of manually creating every cloud resource.
+            </p>
+            <div class="tags">
+              <span class="tag">Terraform</span>
+              <span class="tag">AWS</span>
+              <span class="tag">IaC</span>
+              <span class="tag">Cloud</span>
+            </div>
+            <div class="project-footer">
+              <span>Infrastructure</span>
+              <span>● Repeatable</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Learning roadmap -->
+    <section id="learning">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">06 · Roadmap</div>
+            <h2>Level up your DevOps skills.</h2>
+          </div>
+          <p>
+            Follow a practical progression from Linux and Git fundamentals to
+            containers, cloud, Kubernetes, automation and observability.
+          </p>
+        </div>
+
+        <div class="learning">
+          <div class="roadmap reveal">
+            <div class="roadmap-item">
+              <div class="roadmap-number">01</div>
+              <div>
+                <h4>Linux & Networking</h4>
+                <p>Commands, permissions, processes, ports, DNS and HTTP.</p>
+              </div>
+              <span class="roadmap-state">BASE</span>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-number">02</div>
+              <div>
+                <h4>Git & GitHub</h4>
+                <p>Branches, pull requests, merges and collaborative workflows.</p>
+              </div>
+              <span class="roadmap-state">CORE</span>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-number">03</div>
+              <div>
+                <h4>Docker</h4>
+                <p>Images, containers, networks, volumes and Compose.</p>
+              </div>
+              <span class="roadmap-state">CORE</span>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-number">04</div>
+              <div>
+                <h4>CI/CD</h4>
+                <p>Build pipelines, automated testing and deployment strategies.</p>
+              </div>
+              <span class="roadmap-state">SHIP</span>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-number">05</div>
+              <div>
+                <h4>Kubernetes</h4>
+                <p>Pods, deployments, services, ingress and configuration.</p>
+              </div>
+              <span class="roadmap-state">SCALE</span>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-number">06</div>
+              <div>
+                <h4>Cloud & IaC</h4>
+                <p>AWS fundamentals, Terraform and repeatable environments.</p>
+              </div>
+              <span class="roadmap-state">CLOUD</span>
+            </div>
+          </div>
+
+          <div class="skills reveal">
+            <div class="skill">
+              <div class="skill-row">
+                <span>Linux</span>
+                <span>88%</span>
+              </div>
+              <div class="progress"><span style="width:88%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>Git & GitHub</span>
+                <span>92%</span>
+              </div>
+              <div class="progress"><span style="width:92%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>Docker</span>
+                <span>90%</span>
+              </div>
+              <div class="progress"><span style="width:90%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>Jenkins / CI/CD</span>
+                <span>86%</span>
+              </div>
+              <div class="progress"><span style="width:86%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>Kubernetes</span>
+                <span>82%</span>
+              </div>
+              <div class="progress"><span style="width:82%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>AWS / Cloud</span>
+                <span>78%</span>
+              </div>
+              <div class="progress"><span style="width:78%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>Terraform</span>
+                <span>76%</span>
+              </div>
+              <div class="progress"><span style="width:76%"></span></div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-row">
+                <span>Monitoring</span>
+                <span>74%</span>
+              </div>
+              <div class="progress"><span style="width:74%"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Commands -->
+    <section id="commands">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">07 · Practical</div>
+            <h2>Command-line essentials.</h2>
+          </div>
+          <p>
+            A DevOps engineer should be comfortable reading logs, inspecting
+            containers and interacting with infrastructure from the terminal.
+          </p>
+        </div>
+
+        <div class="terminal-demo">
+          <div class="code-box reveal">
+            <div class="code-head">
+              <span>Docker</span>
+              <span>CLI</span>
+            </div>
+            <pre><code>docker build -t app:latest .
+docker run -d -p 3000:3000 app:latest
+docker ps
+docker logs app
+docker images
+docker stop app</code></pre>
+          </div>
+
+          <div class="code-box reveal">
+            <div class="code-head">
+              <span>Kubernetes</span>
+              <span>kubectl</span>
+            </div>
+            <pre><code>kubectl get nodes
+kubectl get pods
+kubectl get svc
+kubectl describe pod app
+kubectl apply -f deployment.yaml
+kubectl rollout status deployment/app</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">08 · FAQ</div>
+            <h2>Common DevOps questions.</h2>
+          </div>
+          <p>
+            Quick answers to the concepts you are most likely to encounter while
+            learning and building DevOps projects.
+          </p>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item reveal">
+            <button class="faq-question">
+              <span>What is DevOps?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                DevOps is a culture and engineering approach that improves collaboration
+                between development and operations through automation, feedback and reliable delivery.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">
+              <span>What is CI/CD?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                CI/CD automates software integration, testing and delivery so changes can move
+                through a repeatable pipeline with faster feedback.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">
+              <span>Why use Docker?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Docker packages an application with its dependencies into a portable container,
+                making development, testing and deployment more consistent.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">
+              <span>Why use Kubernetes?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Kubernetes manages containerized applications and provides scheduling, scaling,
+                service discovery, rolling updates and self-healing capabilities.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">
+              <span>What is Infrastructure as Code?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Infrastructure as Code describes infrastructure using configuration files,
+                enabling repeatable provisioning, version control and automated changes.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">
+              <span>Why is monitoring important?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Monitoring provides visibility into system health, performance and failures,
+                helping teams detect issues and respond before they become larger incidents.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="contact reveal">
+          <div>
+            <div class="section-kicker">09 · Next Step</div>
+            <h2>Turn every commit<br>into confidence.</h2>
+            <p>
+              Learn the fundamentals, build real projects, automate the workflow and
+              document what you create. That is how DevOps knowledge becomes practical experience.
+            </p>
+          </div>
+
+          <div>
+            <button class="btn btn-primary" id="notifyBtn">Start Your Journey →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        © <span id="year"></span> DevOps Nexus · Built as a single-file HTML experience.
+      </div>
+
+      <div class="footer-links">
+        <a href="#home">Top</a>
+        <a href="#tools">Tools</a>
+        <a href="#projects">Projects</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">DevOps journey started 🚀</div>
+
+  <script>
+    // ========================= DEVOPS NEXUS INTERACTIONS =========================
+    const body = document.body;
+    const themeBtn = document.getElementById("themeBtn");
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+    const toast = document.getElementById("toast");
+
+    const savedTheme = localStorage.getItem("devops-theme");
+
+    if (savedTheme === "light") {
+      body.classList.add("light");
+      themeBtn.textContent = "☀";
+    }
+
+    themeBtn.addEventListener("click", () => {
+      body.classList.toggle("light");
+
+      const isLight = body.classList.contains("light");
+
+      themeBtn.textContent = isLight ? "☀" : "☾";
+      localStorage.setItem("devops-theme", isLight ? "light" : "dark");
+    });
+
+    menuBtn.addEventListener("click", () => {
+      navLinks.classList.toggle("open");
+    });
+
+    document.querySelectorAll(".nav-links a").forEach((link) => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+      });
+    });
+
+    document.querySelectorAll(".faq-question").forEach((question) => {
+      question.addEventListener("click", () => {
+        const item = question.parentElement;
+        const symbol = question.querySelector("span:last-child");
+
+        item.classList.toggle("open");
+        symbol.textContent = item.classList.contains("open") ? "−" : "+";
+      });
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.12
+      }
+    );
+
+    document.querySelectorAll(".reveal").forEach((element) => {
+      observer.observe(element);
+    });
+
+    const counters = document.querySelectorAll("[data-count]");
+
+    const counterObserver = new IntersectionObserver(
+      (entries, observerInstance) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const element = entry.target;
+          const target = Number(element.dataset.count);
+          let current = 0;
+          const duration = 900;
+          const start = performance.now();
+
+          function updateCounter(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            current = Math.floor(progress * target);
+            element.textContent = current;
+
+            if (progress < 1) {
+              requestAnimationFrame(updateCounter);
+            } else {
+              element.textContent = target;
+            }
+          }
+
+          requestAnimationFrame(updateCounter);
+          observerInstance.unobserve(element);
+        });
+      },
+      {
+        threshold: 0.7
+      }
+    );
+
+    counters.forEach((counter) => {
+      counterObserver.observe(counter);
+    });
+
+    document.getElementById("notifyBtn").addEventListener("click", () => {
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        navLinks.classList.remove("open");
+
+        document.querySelectorAll(".faq-item.open").forEach((item) => {
+          item.classList.remove("open");
+          item.querySelector(".faq-question span:last-child").textContent = "+";
+        });
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+      const scrollY = window.scrollY;
+      document.documentElement.style.setProperty("--scroll-y", `${scrollY}px`);
+    });
+  </script>
+  <!-- End of DevOps Nexus -->
+
+  <!--
+    DevOps Nexus design notes:
+    1. Single-file deployment: no build step is required.
+    2. Responsive layout: desktop, tablet and mobile breakpoints are included.
+    3. Theme switch: preference is saved with localStorage.
+    4. Navigation: mobile menu collapses automatically after selection.
+    5. Animation: cards reveal as they enter the viewport.
+    6. Statistics: counters animate when the statistics section is visible.
+    7. FAQ: each question expands independently.
+    8. CTA: the final button provides visual feedback through a toast.
+    9. Accessibility: semantic headings, buttons and labels are used throughout.
+    10. Customization: colors, spacing and sizing are controlled by CSS variables.
+    11. Deployment: upload this file to Nginx, Apache, GitHub Pages or any static host.
+    12. Portfolio usage: replace project text, metrics and links with your own details.
+  -->
+
+</body>
+</html>
